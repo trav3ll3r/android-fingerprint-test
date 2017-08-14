@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backup_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="8dp"
+    android:paddingTop="16dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    >
+
+    <TextView
+        android:id="@+id/use_backup_reason"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+        android:textColor="@color/error_color"
+        android:visibility="visible"
+        tools:text="No fingerprints"
+        />
+
+    <FrameLayout
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/use_backup_reason"
+        >
+
+        <TextView
+            android:id="@+id/password_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/password_description"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <TextView
+            android:id="@+id/new_fingerprint_enrolled_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_fingerprint_enrolled_description"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/description"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/password"
+        android:imeOptions="actionGo"
+        android:inputType="textPassword" />
+
+    <CheckBox
+        android:id="@+id/use_fingerprint_in_future_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/password"
+        android:layout_marginTop="16dp"
+        android:checked="true"
+        android:text="@string/use_fingerprint_in_future"
+        android:visibility="visible" />
+
+</RelativeLayout>
