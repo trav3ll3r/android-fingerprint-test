@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import au.com.trav3ll3r.fingerprint_test.bottomsheet.BottomSheetActivity
 import au.com.trav3ll3r.fingerprint_test.fp.FingerprintAuthenticationDialogFragment
 import au.com.trav3ll3r.fingerprint_test.fp.FingerprintStatus
 import au.com.trav3ll3r.fingerprint_test.fp.FingerprintStatusAdapter
@@ -41,6 +42,7 @@ class FingerprintActivity : AppCompatActivity() {
     private lateinit var btnCreateKey: Button
     private lateinit var btnDeleteKey: Button
     private lateinit var btnSecuritySettings: Button
+    private lateinit var btnBottomSheet: Button
 
     private lateinit var createMessage: TextView
     private lateinit var deleteMessage: TextView
@@ -99,6 +101,7 @@ class FingerprintActivity : AppCompatActivity() {
         btnCreateKey = findViewById<Button>(R.id.button_create_key)
         btnDeleteKey = findViewById<Button>(R.id.button_delete_key)
         btnSecuritySettings = findViewById<Button>(R.id.button_security_settings)
+        btnBottomSheet = findViewById<Button>(R.id.button_start_bottom_sheet)
 
         createMessage = find<TextView>(R.id.create_key_message)
         deleteMessage = find<TextView>(R.id.delete_key_message)
@@ -106,6 +109,10 @@ class FingerprintActivity : AppCompatActivity() {
 
         btnRefreshStatus.setOnClickListener {
             updateRecyclerView()
+        }
+
+        btnBottomSheet.setOnClickListener {
+            startActivity(Intent(this, BottomSheetActivity::class.java))
         }
 
         initRecyclerView()

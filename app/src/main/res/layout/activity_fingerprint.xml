@@ -122,46 +122,16 @@
                     android:text="@string/button_security_settings" />
             </TableRow>
 
+            <TableRow>
+
+                <Button
+                    android:id="@+id/button_start_bottom_sheet"
+                    style="@style/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/button_start_bottom_sheet" />
+            </TableRow>
         </TableLayout>
 
-
-        <!--
-                <TextView
-                    android:id="@+id/error_message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Error Message"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
-                    android:textColor="@color/alert_red"
-                    android:visibility="visible" />
-        -->
-
-        <!--
-                <TextView
-                    android:id="@+id/confirmation_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:text="@string/login_successful"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
-                    android:textColor="?android:attr/colorAccent"
-                    android:visibility="gone" />
-        -->
-
-        <!--
-                <TextView
-                    android:id="@+id/encrypted_message"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingStart="16dp"
-                    android:text="@string/login_successful"
-                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
-                    android:textColor="?android:attr/colorAccent"
-                    android:visibility="gone" />
-        -->
     </LinearLayout>
 </ScrollView>

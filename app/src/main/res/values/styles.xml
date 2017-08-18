@@ -8,6 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="BottomSheetTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowSoftInputMode">stateHidden|adjustPan</item>
+    </style>
+
     <style name="button" parent="Widget.AppCompat.Button.Colored">
         <item name="android:background">@color/success_color</item>
         <item name="android:textAllCaps">false</item>
@@ -16,5 +22,10 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
     </style>
 </resources>

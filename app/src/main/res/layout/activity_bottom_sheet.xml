@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            android:fitsSystemWindows="false"
+            android:background="@color/colorPrimary"
+            app:elevation="0dp"
+            >
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:elevation="4dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="exitUntilCollapsed"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+<!--
+        <ScrollView
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:orientation="vertical"
+                 android:paddingTop="24dp">
+                 <!- CONTENT ->
+             </LinearLayout>
+       </ScrollView>
+-->
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:background="@android:color/white"
+            android:elevation="0dp"
+            app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
+            app:behavior_anchorHeight="250dp"
+            app:behavior_header_layout="@layout/bottomsheet_header"
+            app:behavior_content_layout="@layout/bottomsheet_content"
+            app:behavior_hideable="false"
+            app:layout_behavior="au.com.trav3ll3r.fingerprint_test.bottomsheet.AnchorBottomSheetBehavior" />
+
+</android.support.design.widget.CoordinatorLayout>
