@@ -7,18 +7,23 @@ import android.content.SharedPreferences
 import android.hardware.fingerprint.FingerprintManager
 import android.os.Build
 import android.preference.PreferenceManager
+import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import au.com.trav3ll3r.fingerprint_test.R
 import java.io.IOException
-import java.security.InvalidAlgorithmParameterException
+import java.math.BigInteger
 import java.security.InvalidKeyException
+import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
 import java.security.NoSuchProviderException
 import java.security.UnrecoverableKeyException
 import java.security.cert.CertificateException
+import java.security.spec.AlgorithmParameterSpec
+import java.security.spec.RSAKeyGenParameterSpec
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.NoSuchPaddingException
@@ -28,6 +33,7 @@ import javax.crypto.SecretKey
 class FingerprintUtil(val context: Context) {
 
     companion object {
+        private val TAG = FingerprintUtil::class.java.simpleName
         const val REVOCABLE_KEY_NAME = "revocable_key"
     }
 
@@ -62,7 +68,7 @@ class FingerprintUtil(val context: Context) {
         }
     }
 
-    private val keyGenerator: KeyGenerator? by lazy {
+    private val keyGeneratorSymmetric: KeyGenerator? by lazy {
         var keyGen: KeyGenerator? = null
         try {
             keyGen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
@@ -70,6 +76,21 @@ class FingerprintUtil(val context: Context) {
             //TODO("Failed to get an instance of KeyGenerator")
         } catch (e: NoSuchProviderException) {
             //TODO("Failed to get an instance of KeyGenerator")
+        }
+        keyGen
+    }
+
+    private val keyGeneratorAsymmetric: KeyPairGenerator? by lazy {
+        var keyGen: KeyPairGenerator? = null
+        try {
+            // Set the alias of the entry in Android KeyStore where the key will appear
+            keyGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, "AndroidKeyStore")
+        } catch (ex: NoSuchAlgorithmException) {
+            Log.e(TAG, "NoSuchAlgorithmException", ex)
+        } catch (ex: NoSuchProviderException) {
+            Log.e(TAG, "NoSuchProviderException", ex)
+        } catch (ex: IllegalArgumentException) {
+            Log.e(TAG, "IllegalArgumentException", ex)
         }
         keyGen
     }
@@ -88,48 +109,84 @@ class FingerprintUtil(val context: Context) {
      */
     @SuppressLint("NewApi")
     fun createKey(invalidatedByBiometricEnrollment: Boolean = true): Boolean {
+//        val useAsymmetric = true
+        val useAsymmetric = false
+
         // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
         // for your flow. Use of keys is necessary if you need to know if the set of
         // enrolled fingerprints has changed.
+
+        // INIT keyStore
         try {
             keyStore?.load(null)
-            // Set the alias of the entry in Android KeyStore where the key will appear
-            // and the constrains (purposes) in the constructor of the Builder
+        } catch(ex: IllegalArgumentException) {
+            Log.e(TAG, "IllegalArgumentException")
+        } catch(ex: IOException) {
+            Log.e(TAG, "IOException")
+        } catch(ex: NoSuchAlgorithmException) {
+            Log.e(TAG, "NoSuchAlgorithmException")
+        } catch(ex: CertificateException) {
+            Log.e(TAG, "CertificateException")
+        }
 
-            //            try {
-            //                KeyPairGenerator var5 = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
-            //                KeyPair keyPair = var5.generateKeyPair();
-            //                keyPair.getPublic();
-            //            } catch (Exception ex) {}
+//            try {
+//                val keyPairGenerator: KeyPairGenerator = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore")
+//                val keyPair: KeyPair = keyPairGenerator.generateKeyPair()
+//                return keyPair.public != null
+//            } catch (ex: Exception) {
+//                // TODO: LOG
+//            }
+        try {
+            if (useAsymmetric) {
+                val keyGen = keyGeneratorAsymmetric
+                if (keyGen != null) {
+                    val builder = KeyPairGeneratorSpec.Builder(context)
+                            .setAlias(REVOCABLE_KEY_NAME)
+//                            .setAlgorithmParameterSpec(RSAKeyGenParameterSpec(1024, BigInteger("10000")))
 
-            val builder = KeyGenParameterSpec
-                    .Builder(REVOCABLE_KEY_NAME, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    // Require the user to authenticate with a fingerprint to authorize every use of the key
-                    .setUserAuthenticationRequired(true)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+//                    val rand = SecureRandom()
+//                    val builder = KeyGenParameterSpec
+//                            .Builder(REVOCABLE_KEY_NAME, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+//                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+//                            // Require the user to authenticate with a fingerprint to authorize every use of the key
+//                            .setUserAuthenticationRequired(true)
+//                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+//                    // android.security.keystore.KeyGenParameterSpec or android.security.KeyPairGeneratorSpec required to initialize this KeyPairGenerator
+//                    keyGen.initialize(builder)
+                    keyGen.initialize(RSAKeyGenParameterSpec(1024, BigInteger("10000")))
+                    val key = keyGen.genKeyPair()
+                    return key != null
+                }
+                Log.d(TAG, "KeyGen = NULL")
+            } else {
+                val keyGen = keyGeneratorSymmetric
+                // Set the constrains (purposes) in the constructor of the Builder
+                val builder = KeyGenParameterSpec
+                        .Builder(REVOCABLE_KEY_NAME, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                        // Require the user to authenticate with a fingerprint to authorize every use of the key
+                        .setUserAuthenticationRequired(false)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
 
-            // This is a workaround to avoid crashes on devices whose API level is < 24
-            // because KeyGenParameterSpec.Builder#setInvalidatedByBiometricEnrollment is only
-            // visible on API level +24.
-            // Ideally there should be a compat library for KeyGenParameterSpec.Builder but
-            // which isn't available yet.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                builder.setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
+                // This is a workaround to avoid crashes on devices whose API level is < 24
+                // because KeyGenParameterSpec.Builder#setInvalidatedByBiometricEnrollment is only
+                // visible on API level +24.
+                // Ideally there should be a compat library for KeyGenParameterSpec.Builder but
+                // which isn't available yet.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    builder.setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
+                }
+
+                if (keyGen != null) {
+                    keyGen.init(builder.build())
+                    val key = keyGen.generateKey()
+                    return key != null
+                }
+                Log.d(TAG, "KeyGen = NULL")
             }
 
-            val keyGen = keyGenerator
-            if (keyGen != null) {
-                keyGen.init(builder.build())
-                val key = keyGen.generateKey()
-                return key != null
-            }
-
-        } catch (e: NoSuchAlgorithmException) {
-            // TODO: LOG
-        } catch (e: InvalidAlgorithmParameterException) {
-        } catch (e: CertificateException) {
-        } catch (e: IOException) {
+        } catch (ex: Exception) {
+            Log.d(TAG, "KeyGen -> Exception:", ex)
         }
         return false
     }
