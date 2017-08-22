@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    android:paddingTop="80dp"
     android:paddingTop="?attr/actionBarSize"
     app:layout_behavior="@string/PinnedToolbarBehavior"
+    android:paddingTop="@dimen/bottom_sheet_toolbar_height"
 -->
 <au.com.trav3ll3r.fingerprint_test.bottomsheet.PinnedToolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,7 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fitsSystemWindows="false"
-    android:paddingTop="80dp">
+    >
 
     <au.com.trav3ll3r.fingerprint_test.tabnav.TabbedPagerLayout
         android:id="@+id/tabbed_pager"
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/tab_marginTop"
         android:background="@color/colorPrimary"
-        app:content_padding="0dp"
+        app:content_padding="10dp"
         app:tabs_padding="0dp"
         app:underlineColor="@android:color/transparent"
         app:underlineSelectedColor="@android:color/black" />

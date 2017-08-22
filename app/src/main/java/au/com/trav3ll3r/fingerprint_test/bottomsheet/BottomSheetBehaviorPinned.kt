@@ -122,11 +122,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     var peekHeight: Int = 0
         set(peekHeight) {
             field = Math.max(0, peekHeight)
-            mMaxOffset = mParentHeight - peekHeight
+            collapsedOffset = mParentHeight - peekHeight
         }
 
-    private var mMinOffset: Int = 0
-    private var mMaxOffset: Int = 0
+    private var expandedOffset: Int = 0
+    private var collapsedOffset: Int = 0
     var anchorPoint: Int = 0
 
     /**
@@ -157,6 +157,10 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     private var mActivePointerId: Int = 0
     private var mInitialY: Int = 0
     private var mTouchingScrollingChild: Boolean = false
+    private var TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
+    private var BOTTOM_SHEET_TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
+
+    private val toolbarsHeight by lazy { TOOLBAR_HEIGHT + BOTTOM_SHEET_TOOLBAR_HEIGHT }
 
     /**
      * Default constructor for instantiating BottomSheetBehaviors.
@@ -170,10 +174,8 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
      * @param attrs   The [AttributeSet].
      */
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        var a = context.obtainStyledAttributes(attrs,
-                android.support.design.R.styleable.BottomSheetBehavior_Layout)
-        peekHeight = a.getDimensionPixelSize(
-                android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight, 0)
+        var a = context.obtainStyledAttributes(attrs, android.support.design.R.styleable.BottomSheetBehavior_Layout)
+        peekHeight = a.getDimensionPixelSize(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_peekHeight, 0)
         isHideable = a.getBoolean(android.support.design.R.styleable.BottomSheetBehavior_Layout_behavior_hideable, false)
         a.recycle()
 
@@ -185,6 +187,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         if (attrs != null)
             anchorPoint = a.getDimension(R.styleable.CustomBottomSheetBehavior_anchorPoint, 0f).toInt()
         a.recycle()
+
+        TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
+        BOTTOM_SHEET_TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_toolbar_height)
 
         val configuration = ViewConfiguration.get(context)
         mMinimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
@@ -207,18 +212,20 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         mLastStableState = mState
     }
 
-    override fun onLayoutChild(parent: CoordinatorLayout?, child: V?, layoutDirection: Int): Boolean {
+    override fun onLayoutChild(parent: CoordinatorLayout, child: V, layoutDirection: Int): Boolean {
         // First let the parent lay it out
         if (mState != STATE_DRAGGING && mState != STATE_SETTLING) {
-            if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
-                child!!.fitsSystemWindows = true
-            }
-            parent!!.onLayoutChild(child!!, layoutDirection)
+//            if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
+//                child.fitsSystemWindows = true
+//            }
+            parent.onLayoutChild(child, layoutDirection)
         }
+
         // Offset the bottom sheet
-        mParentHeight = parent!!.height
-        mMinOffset = Math.max(0, mParentHeight - child!!.height)
-        mMaxOffset = Math.max(mParentHeight - peekHeight, mMinOffset)
+        mParentHeight = parent.height
+//        expandedOffset = Math.max(0, mParentHeight - child.height)
+        expandedOffset = Math.max(toolbarsHeight, mParentHeight + toolbarsHeight - child.height)
+        collapsedOffset = Math.max(mParentHeight - peekHeight, expandedOffset)
 
         /**
          * New behavior
@@ -226,11 +233,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         if (mState == STATE_ANCHOR_POINT) {
             ViewCompat.offsetTopAndBottom(child, anchorPoint)
         } else if (mState == STATE_EXPANDED) {
-            ViewCompat.offsetTopAndBottom(child, mMinOffset)
+            ViewCompat.offsetTopAndBottom(child, expandedOffset)
         } else if (isHideable && mState == STATE_HIDDEN) {
             ViewCompat.offsetTopAndBottom(child, mParentHeight)
         } else if (mState == STATE_COLLAPSED) {
-            ViewCompat.offsetTopAndBottom(child, mMaxOffset)
+            ViewCompat.offsetTopAndBottom(child, collapsedOffset)
         }
         if (mViewDragHelper == null) {
             mViewDragHelper = ViewDragHelper.create(parent, mDragCallback)
@@ -373,8 +380,8 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         }
 
         if (dy > 0) { // Upward
-            if (newTop < mMinOffset) {
-                consumed[1] = currentTop - mMinOffset
+            if (newTop < expandedOffset) {
+                consumed[1] = currentTop - expandedOffset
                 ViewCompat.offsetTopAndBottom(child, -consumed[1])
                 setStateInternal(STATE_EXPANDED)
             } else {
@@ -384,13 +391,13 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
             }
         } else if (dy < 0) { // Downward
             if (!ViewCompat.canScrollVertically(target, -1)) {
-                if (newTop <= mMaxOffset || isHideable) {
+                if (newTop <= collapsedOffset || isHideable) {
                     consumed[1] = dy
                     ViewCompat.offsetTopAndBottom(child, -dy)
                     setStateInternal(STATE_DRAGGING)
                 } else {
-                    consumed[1] = currentTop - mMaxOffset
-                    ViewCompat.offsetTopAndBottom(child, -consumed[1])
+                    consumed[1] = currentTop - collapsedOffset
+                    ViewCompat.offsetTopAndBottom(child, -consumed[1] + TOOLBAR_HEIGHT)
                     setStateInternal(STATE_COLLAPSED)
                 }
             }
@@ -400,7 +407,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View) {
-        if (child.top == mMinOffset) {
+        if (child.top == expandedOffset) {
             setStateInternal(STATE_EXPANDED)
             mLastStableState = STATE_EXPANDED
             return
@@ -420,11 +427,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
                 targetState = STATE_ANCHOR_POINT
             } else if (mLastStableState == STATE_ANCHOR_POINT) {
                 // Fling from anchor to expanded
-                top = mMinOffset
+                top = expandedOffset
                 targetState = STATE_EXPANDED
             } else {
                 // We are already expanded
-                top = mMinOffset
+                top = expandedOffset
                 targetState = STATE_EXPANDED
             }
         } else
@@ -436,21 +443,21 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
                     targetState = STATE_ANCHOR_POINT
                 } else if (mLastStableState == STATE_ANCHOR_POINT) {
                     // Fling from anchor to collapsed
-                    top = mMaxOffset
+                    top = collapsedOffset
                     targetState = STATE_COLLAPSED
                 } else {
                     // We are already collapsed
-                    top = mMaxOffset
+                    top = collapsedOffset
                     targetState = STATE_COLLAPSED
                 }
             } else {
                 // Collapse?
                 val currentTop = child.top
                 if (currentTop > anchorPoint * 1.25) { // Multiply by 1.25 to account for parallax. The currentTop needs to be pulled down 50% of the anchor point before collapsing.
-                    top = mMaxOffset
+                    top = collapsedOffset
                     targetState = STATE_COLLAPSED
                 } else if (currentTop < anchorPoint * 0.5) {
-                    top = mMinOffset
+                    top = expandedOffset
                     targetState = STATE_EXPANDED
                 } else {
                     top = anchorPoint
@@ -521,11 +528,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
             val child = mViewRef!!.get() ?: return
             val top: Int
             if (state == STATE_COLLAPSED) {
-                top = mMaxOffset
+                top = collapsedOffset
             } else if (state == STATE_ANCHOR_POINT) {
                 top = anchorPoint
             } else if (state == STATE_EXPANDED) {
-                top = mMinOffset
+                top = expandedOffset
             } else if (isHideable && state == STATE_HIDDEN) {
                 top = mParentHeight
             } else {
@@ -566,12 +573,12 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     private fun shouldHide(child: View?, yvel: Float): Boolean {
-        if (child!!.top < mMaxOffset) {
+        if (child!!.top < collapsedOffset) {
             // It should not hide, but collapse.
             return false
         }
         val newTop = child.top + yvel * HIDE_FRICTION
-        return Math.abs(newTop - mMaxOffset) / peekHeight.toFloat() > HIDE_THRESHOLD
+        return Math.abs(newTop - collapsedOffset) / peekHeight.toFloat() > HIDE_THRESHOLD
     }
 
     private fun findScrollingChild(view: View): View? {
@@ -625,35 +632,34 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
             val top: Int
             @State val targetState: Int
             if (yvel < 0) { // Moving up
-                top = mMinOffset
+                top = expandedOffset
                 targetState = STATE_EXPANDED
             } else if (isHideable && shouldHide(releasedChild, yvel)) {
                 top = mParentHeight
                 targetState = STATE_HIDDEN
             } else if (yvel == 0f) {
                 val currentTop = releasedChild!!.top
-                if (Math.abs(currentTop - mMinOffset) < Math.abs(currentTop - mMaxOffset)) {
-                    top = mMinOffset
+                if (Math.abs(currentTop - expandedOffset) < Math.abs(currentTop - collapsedOffset)) {
+                    top = expandedOffset
                     targetState = STATE_EXPANDED
                 } else {
-                    top = mMaxOffset
+                    top = collapsedOffset
                     targetState = STATE_COLLAPSED
                 }
             } else {
-                top = mMaxOffset
+                top = collapsedOffset
                 targetState = STATE_COLLAPSED
             }
             if (mViewDragHelper!!.settleCapturedViewAt(releasedChild!!.left, top)) {
                 setStateInternal(STATE_SETTLING)
-                ViewCompat.postOnAnimation(releasedChild,
-                        SettleRunnable(releasedChild, targetState))
+                ViewCompat.postOnAnimation(releasedChild, SettleRunnable(releasedChild, targetState))
             } else {
                 setStateInternal(targetState)
             }
         }
 
         override fun clampViewPositionVertical(child: View?, top: Int, dy: Int): Int {
-            return constrain(top, mMinOffset, if (isHideable) mParentHeight else mMaxOffset)
+            return constrain(top, expandedOffset, if (isHideable) mParentHeight else collapsedOffset)
         }
 
         internal fun constrain(amount: Int, low: Int, high: Int): Int {
@@ -666,9 +672,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
         override fun getViewVerticalDragRange(child: View?): Int {
             return if (isHideable) {
-                mParentHeight - mMinOffset
+                mParentHeight - expandedOffset
             } else {
-                mMaxOffset - mMinOffset
+                collapsedOffset - expandedOffset
             }
         }
     }
@@ -676,10 +682,10 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     private fun dispatchOnSlide(top: Int) {
         val bottomSheet = mViewRef!!.get()
         if (bottomSheet != null && mCallback != null) {
-            if (top > mMaxOffset) {
-                notifyOnSlideToListeners(bottomSheet, (mMaxOffset - top).toFloat() / peekHeight)
+            if (top > collapsedOffset) {
+                notifyOnSlideToListeners(bottomSheet, (collapsedOffset - top).toFloat() / peekHeight)
             } else {
-                notifyOnSlideToListeners(bottomSheet, (mMaxOffset - top).toFloat() / (mMaxOffset - mMinOffset))
+                notifyOnSlideToListeners(bottomSheet, (collapsedOffset - top).toFloat() / (collapsedOffset - expandedOffset))
             }
         }
     }
