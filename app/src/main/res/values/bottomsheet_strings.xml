@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="BottomSheetBehavior">au.com.trav3ll3r.fingerprint_test.bottomsheet.BottomSheetBehaviorPinned</string>
+    <!--<string name="BottomSheetBehavior">au.com.trav3ll3r.fingerprint_test.bottomsheet.BottomSheetBehaviorTabbedToolbar</string>-->
+    <string name="PinnedToolbarBehavior">au.com.trav3ll3r.fingerprint_test.bottomsheet.PinnedToolbarBehavior</string>
+</resources>

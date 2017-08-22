@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="AnchorBottomSheetBehavior_Layout">
-        <attr name="behavior_peekHeight"/>
-        <attr name="behavior_can_hide" format="boolean" />
-        <attr name="behavior_skipCollapsed" format="boolean" />
-        <attr name="behavior_anchorHeight" format="dimension">
-            <enum name="auto" value="-1"/>
-        </attr>
-        <attr name="behavior_anchorColor" format="color" />
-        <attr name="behavior_collapsedColor" format="color" />
-        <attr name="behavior_anchorTextColor" format="color" />
-        <attr name="behavior_collapsedTextColor" format="color" />
-        <attr name="behavior_header_layout" format="reference" />
-        <attr name="behavior_content_layout" format="reference" />
-        <attr name="behavior_parallax_layout" format="reference" />
+    <declare-styleable name="CustomBottomSheetBehavior">
+        <attr name="anchorPoint" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="TabbedPagerLayout">
+        <attr name="tabs_padding" format="dimension" />
+        <attr name="content_padding" format="dimension" />
+        <attr name="underlineColor" format="reference" />
+        <attr name="underlineSelectedColor" format="reference" />
+    </declare-styleable>
+
+    <!--    <declare-styleable name="AnchorBottomSheetBehavior_Layout">
+            <attr name="behavior_peekHeight"/>
+            <attr name="behavior_can_hide" format="boolean" />
+            <attr name="behavior_skipCollapsed" format="boolean" />
+            <attr name="behavior_anchorHeight" format="dimension">
+                <enum name="auto" value="-1"/>
+            </attr>
+            <attr name="behavior_anchorColor" format="color" />
+            <attr name="behavior_collapsedColor" format="color" />
+            <attr name="behavior_anchorTextColor" format="color" />
+            <attr name="behavior_collapsedTextColor" format="color" />
+            <attr name="behavior_header_layout" format="reference" />
+            <attr name="behavior_content_layout" format="reference" />
+            <attr name="behavior_parallax_layout" format="reference" />
+        </declare-styleable>-->
 </resources>
