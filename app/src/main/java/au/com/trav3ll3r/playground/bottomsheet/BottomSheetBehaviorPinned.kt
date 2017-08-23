@@ -152,11 +152,10 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     private var mActivePointerId: Int = 0
     private var mInitialY: Int = 0
     private var mTouchingScrollingChild: Boolean = false
-    private var TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
-    private var BOTTOM_SHEET_TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
+    private var APP_TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
     private var SYSTEM_BAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
 
-    private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + TOOLBAR_HEIGHT + BOTTOM_SHEET_TOOLBAR_HEIGHT }
+    private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + APP_TOOLBAR_HEIGHT }
 
     /**
      * Default constructor for instantiating BottomSheetBehaviors.
@@ -184,8 +183,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
             anchorPoint = a.getDimension(R.styleable.CustomBottomSheetBehavior_anchorPoint, 0f).toInt()
         a.recycle()
 
-        TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
-        BOTTOM_SHEET_TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_toolbar_height)
+        APP_TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
         SYSTEM_BAR_HEIGHT = getStatusBarHeight(context)
 
         val configuration = ViewConfiguration.get(context)
@@ -402,7 +400,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
                     setStateInternal(STATE_DRAGGING)
                 } else {
                     consumed[1] = currentTop - collapsedOffset
-                    ViewCompat.offsetTopAndBottom(child, -consumed[1] + TOOLBAR_HEIGHT)
+                    ViewCompat.offsetTopAndBottom(child, -consumed[1] + APP_TOOLBAR_HEIGHT)
                     setStateInternal(STATE_COLLAPSED)
                 }
             }
@@ -560,7 +558,6 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         mState = state
         val bottomSheet = mViewRef!!.get()
         if (bottomSheet != null && mCallback != null) {
-            //            mCallback.onStateChanged(bottomSheet, state);
             notifyStateChangedToListeners(bottomSheet, state)
         }
     }

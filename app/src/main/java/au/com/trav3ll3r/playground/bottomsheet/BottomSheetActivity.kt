@@ -3,6 +3,7 @@ package au.com.trav3ll3r.playground.bottomsheet
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -32,11 +33,14 @@ class BottomSheetActivity : AppCompatActivity() {
     private lateinit var bottomSheet: View
     private lateinit var tabbedPagerLayout: TabbedPagerLayout
     private lateinit var toolbar: Toolbar
+    private lateinit var appBarLayout: AppBarLayout
+    private val DEFAULT_APP_TOOLBAR_ELEVATION: Float by lazy { appBarLayout.elevation }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_sheet)
 
+        appBarLayout = find(R.id.app_bar_layout)
         toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -56,6 +60,7 @@ class BottomSheetActivity : AppCompatActivity() {
             override fun onStateChanged(bottomSheet: View, @BottomSheetBehaviorPinned.State newState: Int) {
                 tabbedPagerLayout.setOnClickListener(null)
                 tabbedPagerLayout.setTabsClickable(true)
+                appBarLayout.elevation = DEFAULT_APP_TOOLBAR_ELEVATION
 
                 when (newState) {
                     BottomSheetBehaviorPinned.STATE_COLLAPSED -> {
@@ -63,8 +68,12 @@ class BottomSheetActivity : AppCompatActivity() {
                         tabbedPagerLayout.setOnClickListener(openToAnchorClickListener)
                         tabbedPagerLayout.setTabsClickable(false)
                     }
+                    BottomSheetBehaviorPinned.STATE_EXPANDED -> {
+                        appBarLayout.elevation = 0f
+                        Log.d("bottomsheet-", "STATE_EXPANDED")
+                    }
+
                     BottomSheetBehaviorPinned.STATE_DRAGGING -> Log.d("bottomsheet-", "STATE_DRAGGING")
-                    BottomSheetBehaviorPinned.STATE_EXPANDED -> Log.d("bottomsheet-", "STATE_EXPANDED")
                     BottomSheetBehaviorPinned.STATE_ANCHOR_POINT -> Log.d("bottomsheet-", "STATE_ANCHOR_POINT")
                     BottomSheetBehaviorPinned.STATE_HIDDEN -> Log.d("bottomsheet-", "STATE_HIDDEN")
                     BottomSheetBehaviorPinned.STATE_SETTLING -> Log.d("bottomsheet-", "STATE_SETTLING")

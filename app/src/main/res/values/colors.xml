@@ -4,9 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="pale_grey">#e5e5e5</color>
+    <color name="pastel_grey">#f5f5f5</color>
+
     <color name="error_color">#f44336</color>
     <color name="hint_color">#42000000</color>
     <color name="success_color">#009688</color>
-    <!--<color name="tabbedPagerBackground">@android:color/white</color>-->
-    <color name="tabbedPagerBackground">#a0a0a0</color>
+    <color name="tabbedPagerBackground">@color/pastel_grey</color>
+
 </resources>

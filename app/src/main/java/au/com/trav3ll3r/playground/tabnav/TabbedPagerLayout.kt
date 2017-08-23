@@ -174,7 +174,7 @@ class TabbedPagerLayout
     }
 
     fun markAsSheetDragEnabled(enabled: Boolean) {
-        tabsBackground.elevation = if (enabled) 0f else 20f
+        tabsBackground.elevation = if (enabled) 0f else 10f
     }
 
     fun setTabsClickable(canClick: Boolean) {
