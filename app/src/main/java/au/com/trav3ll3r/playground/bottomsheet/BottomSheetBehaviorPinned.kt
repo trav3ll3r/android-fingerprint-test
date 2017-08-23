@@ -8,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.MotionEventCompat
 import android.support.v4.view.NestedScrollingChild
 import android.support.v4.view.ViewCompat
+import android.support.v4.widget.NestedScrollView
 import android.support.v4.widget.ViewDragHelper
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -15,14 +16,32 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
 import java.lang.ref.WeakReference
 import java.util.*
 
-
 class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
+    private object Holder {
+        lateinit var instance: BottomSheetBehaviorPinned<*>
+    }
+
+    private var scrollingContent: NestedScrollView? = null
+
+    fun trackScrollingContent(content: NestedScrollView?) {
+        scrollingContent = content
+        scrollingContent?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, _ -> onScrollingContentChange() })
+        onScrollingContentChange()
+    }
+
+    var tabbedPagerLayout: TabbedPagerLayout? = null
+
+    private fun onScrollingContentChange() {
+        tabbedPagerLayout?.markAsSheetDragEnabled(DRAGGING_ENABLED)
+    }
+
     companion object {
-        var LOCKED_FOR_SCROLLING = false
+        val INSTANCE: BottomSheetBehaviorPinned<*> by lazy { Holder.instance }
 
         /**
          * The bottom sheet is dragging.
@@ -66,38 +85,12 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
          * @return The [BottomSheetBehaviorPinned] associated with the `view`.
          */
         fun <V : View> from(view: V): BottomSheetBehaviorPinned<V> {
-            val params = view.layoutParams as? CoordinatorLayout.LayoutParams ?: throw IllegalArgumentException("The view is not a child of CoordinatorLayout")
-
-            val behavior = params.behavior as? BottomSheetBehaviorPinned<*> ?: throw IllegalArgumentException(
-                    "The view is not associated with BottomSheetBehaviorPinned")
-            return behavior as BottomSheetBehaviorPinned<V>
+            val params = view.layoutParams as? CoordinatorLayout.LayoutParams ?: throw IllegalArgumentException("The view is not a direct child of CoordinatorLayout")
+            val behavior = params.behavior as? BottomSheetBehaviorPinned<*> ?: throw IllegalArgumentException("The view is not associated with BottomSheetBehaviorPinned")
+            val result = behavior as BottomSheetBehaviorPinned<V>
+            Holder.instance = result
+            return result
         }
-    }
-
-    /**
-     * Callback for monitoring events about bottom sheets.
-     */
-    abstract class BottomSheetCallback {
-
-        /**
-         * Called when the bottom sheet changes its state.
-         *
-         * @param bottomSheet The bottom sheet view.
-         * @param newState    The new state. This will be one of [.STATE_DRAGGING],
-         * [.STATE_SETTLING], [.STATE_ANCHOR_POINT],
-         * [.STATE_EXPANDED],
-         * [.STATE_COLLAPSED], or [.STATE_HIDDEN].
-         */
-        abstract fun onStateChanged(bottomSheet: View, @State newState: Int)
-
-        /**
-         * Called when the bottom sheet is being dragged.
-         *
-         * @param bottomSheet The bottom sheet view.
-         * @param slideOffset The new offset of this bottom sheet within its range, from 0 to 1
-         * when it is moving upward, and from 0 to -1 when it moving downward.
-         */
-        abstract fun onSlide(bottomSheet: View, slideOffset: Float)
     }
 
     /**
@@ -227,7 +220,6 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
         // Offset the bottom sheet
         mParentHeight = parent.height
-//        expandedOffset = Math.max(0, mParentHeight - child.height)
         expandedOffset = Math.max(toolbarsHeight, mParentHeight + toolbarsHeight - child.height)
         collapsedOffset = Math.max(mParentHeight - peekHeight, expandedOffset)
 
@@ -252,7 +244,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onInterceptTouchEvent(parent: CoordinatorLayout, child: V?, event: MotionEvent): Boolean {
-        if (!LOCKED_FOR_SCROLLING) {
+        if (DRAGGING_ENABLED) {
 
             if (!child!!.isShown) {
                 return false
@@ -340,7 +332,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, directTargetChild: View, target: View, nestedScrollAxes: Int): Boolean {
-        if (!LOCKED_FOR_SCROLLING) {
+        if (DRAGGING_ENABLED) {
             mNestedScrolled = false
             return nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
         } else {
@@ -420,7 +412,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View) {
-        if (!LOCKED_FOR_SCROLLING) {
+        if (DRAGGING_ENABLED) {
             if (child.top == expandedOffset) {
                 setStateInternal(STATE_EXPANDED)
                 mLastStableState = STATE_EXPANDED
@@ -492,7 +484,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout, child: V, target: View, velocityX: Float, velocityY: Float): Boolean {
-        if (!LOCKED_FOR_SCROLLING) {
+        if (DRAGGING_ENABLED) {
             return target === mNestedScrollingChildRef!!.get() && (mState != STATE_EXPANDED || super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY))
         } else {
             return false // DID NOT CONSUME Fling
@@ -760,4 +752,39 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         return result
     }
 
+    /**
+     * Callback for monitoring events about bottom sheets.
+     */
+    abstract class BottomSheetCallback {
+
+        /**
+         * Called when the bottom sheet changes its state.
+         *
+         * @param bottomSheet The bottom sheet view.
+         * @param newState    The new state. This will be one of [.STATE_DRAGGING],
+         * [.STATE_SETTLING], [.STATE_ANCHOR_POINT],
+         * [.STATE_EXPANDED],
+         * [.STATE_COLLAPSED], or [.STATE_HIDDEN].
+         */
+        abstract fun onStateChanged(bottomSheet: View, @State newState: Int)
+
+        /**
+         * Called when the bottom sheet is being dragged.
+         *
+         * @param bottomSheet The bottom sheet view.
+         * @param slideOffset The new offset of this bottom sheet within its range, from 0 to 1
+         * when it is moving upward, and from 0 to -1 when it moving downward.
+         */
+        abstract fun onSlide(bottomSheet: View, slideOffset: Float)
+    }
+
+    private val DRAGGING_ENABLED: Boolean
+        get() {
+            return when (mState) {
+                BottomSheetBehaviorPinned.STATE_EXPANDED -> {
+                    return scrollingContent?.scrollY == 0
+                }
+                else -> true
+            }
+        }
 }

@@ -7,4 +7,6 @@
     <color name="error_color">#f44336</color>
     <color name="hint_color">#42000000</color>
     <color name="success_color">#009688</color>
+    <!--<color name="tabbedPagerBackground">@android:color/white</color>-->
+    <color name="tabbedPagerBackground">#a0a0a0</color>
 </resources>

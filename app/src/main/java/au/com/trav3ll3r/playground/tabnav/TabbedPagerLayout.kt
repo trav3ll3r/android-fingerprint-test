@@ -11,8 +11,11 @@ import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.bottomsheet.BottomSheetBehaviorPinned
+import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.find
 
 class TabbedPagerLayout
@@ -31,6 +34,7 @@ class TabbedPagerLayout
             return viewPager.adapter.count
         }
 
+    private val tabsBackground: ViewGroup by lazy { find<ViewGroup>(R.id.tabbed_background) }
     private val tabLayout: TabLayout by lazy { find<TabLayout>(R.id.tab_layout) }
     private val tabIndicatorBg: View by lazy { find<View>(R.id.tab_indicator_bg) }
     private val tabIndicator: View by lazy { find<View>(R.id.tab_indicator) }
@@ -54,8 +58,9 @@ class TabbedPagerLayout
         params.rightMargin = tabPadding
         tabIndicatorBg.layoutParams = params
 
-        val tabUnderlineColor: Int
-        val tabUnderlineSelectedColor: Int
+        @ColorRes val tabUnderlineColor: Int
+        @ColorRes val tabUnderlineSelectedColor: Int
+        @ColorRes val tabsBackgroundColor: Int
 
         val a = context.theme.obtainStyledAttributes(
                 attrs,
@@ -63,22 +68,19 @@ class TabbedPagerLayout
                 0, 0)
 
         try {
-            tabUnderlineColor = a.getResourceId(R.styleable.TabbedPagerLayout_underlineColor, android.R.color.white)
-            tabUnderlineSelectedColor = a.getResourceId(R.styleable.TabbedPagerLayout_underlineSelectedColor, R.color.colorPrimaryDark)
+            tabUnderlineColor = a.getResourceId(R.styleable.TabbedPagerLayout_underlineColor, android.R.color.holo_red_dark)
+            tabUnderlineSelectedColor = a.getResourceId(R.styleable.TabbedPagerLayout_underlineSelectedColor, android.R.color.holo_red_dark)
+            tabsBackgroundColor = a.getResourceId(R.styleable.TabbedPagerLayout_tabs_background, android.R.color.holo_red_dark)
         } finally {
             a.recycle()
         }
 
         setTabUnderlineColor(tabUnderlineColor)
         setTabUnderlineSelectedColor(tabUnderlineSelectedColor)
+        setTabsBackground(tabsBackgroundColor)
 
         initViewPager()
     }
-
-//    fun setViewPager(viewPager: ViewPager) {
-//        this.viewPager = viewPager
-//        initViewPager()
-//    }
 
     private fun initViewPager() {
         tabLayout.setupWithViewPager(viewPager)
@@ -103,8 +105,8 @@ class TabbedPagerLayout
         // Change margins for content
         val contentPadding = getPadding(attrs, R.styleable.TabbedPagerLayout_content_padding, R.dimen.activity_horizontal_margin)
         val params = viewPager.layoutParams as LayoutParams
-        params.leftMargin = contentPadding
-        params.rightMargin = contentPadding
+        params.marginStart = contentPadding
+        params.marginEnd = contentPadding
         viewPager.layoutParams = params
     }
 
@@ -134,6 +136,9 @@ class TabbedPagerLayout
         tabIndicator.layoutParams.width = width
         tabIndicator.x = startOffset
         tabIndicator.requestLayout()
+
+        val frag = viewPager.adapter?.instantiateItem(viewPager, currentPage) as BaseTabbedPageFragment
+        BottomSheetBehaviorPinned.INSTANCE.trackScrollingContent(frag.getScrollableContent())
     }
 
     private fun getPadding(attrs: AttributeSet?, index: Int, defaultValueId: Int): Int {
@@ -153,11 +158,11 @@ class TabbedPagerLayout
         return padding
     }
 
-    fun setTabUnderlineColor(@ColorRes color: Int) =
-            tabIndicatorBg.setBackgroundColor(ContextCompat.getColor(context, color))
+    fun setTabUnderlineColor(@ColorRes color: Int) = tabIndicatorBg.setBackgroundColor(ContextCompat.getColor(context, color))
 
-    fun setTabUnderlineSelectedColor(@ColorRes color: Int) =
-            tabIndicator.setBackgroundColor(ContextCompat.getColor(context, color))
+    fun setTabUnderlineSelectedColor(@ColorRes color: Int) = tabIndicator.setBackgroundColor(ContextCompat.getColor(context, color))
+
+    fun setTabsBackground(@ColorRes color: Int) { tabsBackground.backgroundResource = color }
 
     fun setAdapter(adapter: TabbedPagerAdapter) {
         viewPager.adapter = adapter
@@ -166,6 +171,10 @@ class TabbedPagerLayout
             tab?.customView = adapter.dataSource.getTabContent(i)
         }
         viewPager.addOnPageChangeListener(pageListener)
+    }
+
+    fun markAsSheetDragEnabled(enabled: Boolean) {
+        tabsBackground.elevation = if (enabled) 0f else 20f
     }
 
     fun setTabsClickable(canClick: Boolean) {

@@ -6,6 +6,7 @@
 
     <declare-styleable name="TabbedPagerLayout">
         <attr name="tabs_padding" format="dimension" />
+        <attr name="tabs_background" format="color" />
         <attr name="content_padding" format="dimension" />
         <attr name="underlineColor" format="reference" />
         <attr name="underlineSelectedColor" format="reference" />

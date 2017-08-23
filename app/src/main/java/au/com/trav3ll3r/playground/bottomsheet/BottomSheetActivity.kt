@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.tabnav.BaseTabbedPageFragment
 import au.com.trav3ll3r.playground.tabnav.QuickActionsFragment
 import au.com.trav3ll3r.playground.tabnav.QuickTasksFragment
 import au.com.trav3ll3r.playground.tabnav.TabCustomView
@@ -39,9 +40,8 @@ class BottomSheetActivity : AppCompatActivity() {
         toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        setUpBottomSheet()
-
         configureTabbedPagerLayout(supportFragmentManager)
+        setUpBottomSheet()
     }
 
     private fun setUpBottomSheet() {
@@ -51,6 +51,7 @@ class BottomSheetActivity : AppCompatActivity() {
         val coordinatorLayout = find<CoordinatorLayout>(R.id.coordinator_layout)
         bottomSheet = coordinatorLayout.find(R.id.bottom_sheet)
         bottomSheetBehavior = BottomSheetBehaviorPinned.from(bottomSheet)
+        bottomSheetBehavior.tabbedPagerLayout = tabbedPagerLayout
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehaviorPinned.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, @BottomSheetBehaviorPinned.State newState: Int) {
                 tabbedPagerLayout.setOnClickListener(null)
@@ -93,13 +94,10 @@ class BottomSheetActivity : AppCompatActivity() {
         val MAX_ITEMS = items.size
         tabbedPagerLayout = find(R.id.tabbed_pager)
 
-//        val viewPager = find<ViewPager>(R.id.tabbed_menu_view_pager)
-//        tabbedPagerLayout.setViewPager(viewPager)
-
         tabbedPagerLayout.setAdapter(TabbedPagerAdapter(object : TabbedPagerAdapter.DataSource {
             override fun getCount() = items.size
 
-            override fun newPage(index: Int): Fragment = when (index) {
+            override fun newPage(index: Int): BaseTabbedPageFragment = when (index) {
                 0 -> QuickActionsFragment.newInstance()
                 1 -> QuickTasksFragment.newInstance()
                 else -> throw RuntimeException("${javaClass.simpleName} should not have more than $MAX_ITEMS tabs")
@@ -127,14 +125,6 @@ class BottomSheetActivity : AppCompatActivity() {
 
     private fun setBottomSheetHeight() {
         bottomSheet.viewTreeObserver.removeOnGlobalLayoutListener(bottomSheetTreeObserver)
-//        val initialHeight = contentView?.measuredHeight ?: 0 // IF THIS IS NULL WE'RE FUBAR!!!
-//        val fullHeight = initialHeight - toolbar.height
-//        bottomSheet.layoutParams.height = fullHeight
-//
-//        bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
-////        bottomSheetBehavior.isHideable = false
-//
-//        bottomSheet.requestLayout()
         updateTabbedPagerLayout()
     }
 }

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import au.com.trav3ll3r.playground.R
 
-class QuickTasksFragment : Fragment() {
+class QuickTasksFragment : BaseTabbedPageFragment() {
     companion object {
         fun newInstance(): QuickTasksFragment {
             return QuickTasksFragment()
