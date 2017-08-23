@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.bottomsheet
+package au.com.trav3ll3r.playground.bottomsheet
 
 import android.os.Bundle
 import android.support.annotation.DrawableRes
@@ -11,12 +11,12 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
-import au.com.trav3ll3r.fingerprint_test.R
-import au.com.trav3ll3r.fingerprint_test.tabnav.QuickActionsFragment
-import au.com.trav3ll3r.fingerprint_test.tabnav.QuickTasksFragment
-import au.com.trav3ll3r.fingerprint_test.tabnav.TabCustomView
-import au.com.trav3ll3r.fingerprint_test.tabnav.TabbedPagerAdapter
-import au.com.trav3ll3r.fingerprint_test.tabnav.TabbedPagerLayout
+import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.tabnav.QuickActionsFragment
+import au.com.trav3ll3r.playground.tabnav.QuickTasksFragment
+import au.com.trav3ll3r.playground.tabnav.TabCustomView
+import au.com.trav3ll3r.playground.tabnav.TabbedPagerAdapter
+import au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
 import org.jetbrains.anko.find
 import org.jetbrains.anko.padding
 

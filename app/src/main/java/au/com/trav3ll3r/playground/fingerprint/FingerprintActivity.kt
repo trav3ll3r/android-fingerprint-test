@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test
+package au.com.trav3ll3r.playground.fingerprint
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -15,11 +15,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import au.com.trav3ll3r.fingerprint_test.bottomsheet.BottomSheetActivity
-import au.com.trav3ll3r.fingerprint_test.fp.FingerprintAuthenticationDialogFragment
-import au.com.trav3ll3r.fingerprint_test.fp.FingerprintStatus
-import au.com.trav3ll3r.fingerprint_test.fp.FingerprintStatusAdapter
-import au.com.trav3ll3r.fingerprint_test.util.FingerprintUtil
+import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.bottomsheet.BottomSheetActivity
+import au.com.trav3ll3r.playground.fingerprint.FingerprintAuthenticationDialogFragment
+import au.com.trav3ll3r.playground.fingerprint.FingerprintStatus
+import au.com.trav3ll3r.playground.fingerprint.FingerprintStatusAdapter
+import au.com.trav3ll3r.playground.util.FingerprintUtil
 import org.jetbrains.anko.find
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher

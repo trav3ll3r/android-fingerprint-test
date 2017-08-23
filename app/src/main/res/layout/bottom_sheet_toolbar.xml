@@ -4,7 +4,7 @@
     app:layout_behavior="@string/PinnedToolbarBehavior"
     android:paddingTop="@dimen/bottom_sheet_toolbar_height"
 -->
-<au.com.trav3ll3r.fingerprint_test.bottomsheet.PinnedToolbar
+<au.com.trav3ll3r.playground.bottomsheet.PinnedToolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,7 +12,7 @@
     android:fitsSystemWindows="false"
     >
 
-    <au.com.trav3ll3r.fingerprint_test.tabnav.TabbedPagerLayout
+    <au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
         android:id="@+id/tabbed_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,4 +23,4 @@
         app:underlineColor="@android:color/transparent"
         app:underlineSelectedColor="@android:color/black" />
 
-</au.com.trav3ll3r.fingerprint_test.bottomsheet.PinnedToolbar>
+</au.com.trav3ll3r.playground.bottomsheet.PinnedToolbar>

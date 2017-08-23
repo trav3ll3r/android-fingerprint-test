@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.bottomsheet
+package au.com.trav3ll3r.playground.bottomsheet
 
 import android.content.Context
 import android.support.design.widget.CoordinatorLayout

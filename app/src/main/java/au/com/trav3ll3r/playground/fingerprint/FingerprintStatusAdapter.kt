@@ -1,11 +1,11 @@
-package au.com.trav3ll3r.fingerprint_test.fp
+package au.com.trav3ll3r.playground.fingerprint
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 

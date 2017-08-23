@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.tabnav
+package au.com.trav3ll3r.playground.tabnav
 
 import android.content.Context
 import android.support.annotation.ColorRes
@@ -12,7 +12,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 import org.jetbrains.anko.find
 
 class TabbedPagerLayout

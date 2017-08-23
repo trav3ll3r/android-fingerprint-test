@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
-    <au.com.trav3ll3r.fingerprint_test.tabnav.TabbedPagerLayout
+    <au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
         android:id="@+id/tabbed_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

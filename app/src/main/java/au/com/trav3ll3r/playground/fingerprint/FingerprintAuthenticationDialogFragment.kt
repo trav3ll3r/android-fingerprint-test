@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.fp
+package au.com.trav3ll3r.playground.fingerprint
 
 import android.annotation.SuppressLint
 import android.app.DialogFragment
@@ -17,10 +17,10 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import au.com.trav3ll3r.fingerprint_test.FingerprintActivity
-import au.com.trav3ll3r.fingerprint_test.R
-import au.com.trav3ll3r.fingerprint_test.util.FingerprintUiHelper
-import au.com.trav3ll3r.fingerprint_test.util.FingerprintUtil
+import au.com.trav3ll3r.playground.fingerprint.FingerprintActivity
+import au.com.trav3ll3r.playground.R
+import au.com.trav3ll3r.playground.util.FingerprintUiHelper
+import au.com.trav3ll3r.playground.util.FingerprintUtil
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password

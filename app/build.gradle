@@ -8,7 +8,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
     defaultConfig {
-        applicationId "au.com.trav3ll3r.fingerprint_test"
+        applicationId "au.com.trav3ll3r.playground"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1

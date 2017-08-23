@@ -1,10 +1,9 @@
-package au.com.trav3ll3r.fingerprint_test.tabnav
+package au.com.trav3ll3r.playground.tabnav
 
 import android.content.Context
 import android.support.v4.widget.NestedScrollView
 import android.util.AttributeSet
 import android.view.MotionEvent
-import au.com.trav3ll3r.fingerprint_test.bottomsheet.BottomSheetBehaviorPinned
 
 class TabScrollableContent(context: Context, attributeSet: AttributeSet) : NestedScrollView(context, attributeSet) {
 

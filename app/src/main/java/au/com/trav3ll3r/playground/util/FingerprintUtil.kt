@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.util
+package au.com.trav3ll3r.playground.util
 
 import android.annotation.SuppressLint
 import android.app.KeyguardManager
@@ -11,7 +11,7 @@ import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 import java.io.IOException
 import java.math.BigInteger
 import java.security.InvalidKeyException
@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException
 import java.security.NoSuchProviderException
 import java.security.UnrecoverableKeyException
 import java.security.cert.CertificateException
-import java.security.spec.AlgorithmParameterSpec
 import java.security.spec.RSAKeyGenParameterSpec
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator

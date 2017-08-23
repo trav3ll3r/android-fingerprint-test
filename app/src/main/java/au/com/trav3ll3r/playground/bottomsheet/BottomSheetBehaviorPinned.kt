@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.bottomsheet
+package au.com.trav3ll3r.playground.bottomsheet
 
 import android.content.Context
 import android.os.Parcel
@@ -14,7 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 import java.lang.ref.WeakReference
 import java.util.*
 

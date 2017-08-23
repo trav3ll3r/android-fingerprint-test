@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.tabnav
+package au.com.trav3ll3r.playground.tabnav
 
 import android.content.Context
 import android.support.annotation.ColorRes
@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 import org.jetbrains.anko.find
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.textResource

@@ -1,4 +1,4 @@
-package au.com.trav3ll3r.fingerprint_test.util
+package au.com.trav3ll3r.playground.util
 
 import android.annotation.SuppressLint
 import android.hardware.fingerprint.FingerprintManager
@@ -6,7 +6,7 @@ import android.os.CancellationSignal
 import android.widget.ImageView
 import android.widget.TextView
 
-import au.com.trav3ll3r.fingerprint_test.R
+import au.com.trav3ll3r.playground.R
 
 /**
  * Small helper class to manage text/icon around fingerprint authentication UI.
