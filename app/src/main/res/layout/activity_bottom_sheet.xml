@@ -41,11 +41,14 @@
         app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
         app:layout_behavior="@string/BottomSheetBehavior">
 
+    <!--
+        android:fitsSystemWindows="false"
+    -->
         <include
             layout="@layout/bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="false"
+            android:fitsSystemWindows="true"
             />
 
     </android.support.v4.widget.NestedScrollView>
@@ -56,6 +59,6 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="false"
         app:layout_behavior="@string/PinnedToolbarBehavior"
-        android:visibility="visible"/>
+        android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>

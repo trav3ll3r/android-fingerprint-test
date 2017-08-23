@@ -13,6 +13,9 @@
         app:tabIndicatorHeight="0dp"
         />
 
+<!--
+    android:layout_marginTop="@dimen/tab_indicator_line_marginTop"
+-->
     <LinearLayout
         android:id="@+id/tab_indicator_bg"
         android:layout_width="match_parent"
@@ -30,4 +33,18 @@
             />
 
     </LinearLayout>
+
+<!--
+    android:layout_height="0dp"
+    android:layout_weight="1"
+-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/tabbed_menu_view_pager"
+        android:overScrollMode="ifContentScrolls"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@android:color/white"
+        />
+
 </merge>

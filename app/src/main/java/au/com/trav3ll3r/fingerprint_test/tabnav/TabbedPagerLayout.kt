@@ -34,7 +34,7 @@ class TabbedPagerLayout
     private val tabLayout: TabLayout by lazy { find<TabLayout>(R.id.tab_layout) }
     private val tabIndicatorBg: View by lazy { find<View>(R.id.tab_indicator_bg) }
     private val tabIndicator: View by lazy { find<View>(R.id.tab_indicator) }
-    private lateinit var viewPager: ViewPager
+    private val viewPager: ViewPager by lazy { find<ViewPager>(R.id.tabbed_menu_view_pager) }
 
     init {
         inflate(context, R.layout.tabbed_pager_layout, this)
@@ -70,12 +70,14 @@ class TabbedPagerLayout
 
         setTabUnderlineColor(tabUnderlineColor)
         setTabUnderlineSelectedColor(tabUnderlineSelectedColor)
-    }
 
-    fun setViewPager(viewPager: ViewPager) {
-        this.viewPager = viewPager
         initViewPager()
     }
+
+//    fun setViewPager(viewPager: ViewPager) {
+//        this.viewPager = viewPager
+//        initViewPager()
+//    }
 
     private fun initViewPager() {
         tabLayout.setupWithViewPager(viewPager)
@@ -204,6 +206,11 @@ class TabbedPagerLayout
 
     override fun performClick(): Boolean {
         return super.performClick()
+    }
+
+    fun onParentLayoutChange(parent: View) {
+        viewPager.layoutParams.height = parent.measuredHeight - tabLayout.height - parent.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
+        requestLayout()
     }
 }
 

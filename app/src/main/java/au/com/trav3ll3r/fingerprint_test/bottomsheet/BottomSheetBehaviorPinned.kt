@@ -18,9 +18,11 @@ import au.com.trav3ll3r.fingerprint_test.R
 import java.lang.ref.WeakReference
 import java.util.*
 
+
 class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
     companion object {
+        var LOCKED_FOR_SCROLLING = false
 
         /**
          * The bottom sheet is dragging.
@@ -159,8 +161,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     private var mTouchingScrollingChild: Boolean = false
     private var TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
     private var BOTTOM_SHEET_TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
+    private var SYSTEM_BAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
 
-    private val toolbarsHeight by lazy { TOOLBAR_HEIGHT + BOTTOM_SHEET_TOOLBAR_HEIGHT }
+    private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + TOOLBAR_HEIGHT + BOTTOM_SHEET_TOOLBAR_HEIGHT }
 
     /**
      * Default constructor for instantiating BottomSheetBehaviors.
@@ -190,6 +193,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
         TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
         BOTTOM_SHEET_TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.bottom_sheet_toolbar_height)
+        SYSTEM_BAR_HEIGHT = getStatusBarHeight(context)
 
         val configuration = ViewConfiguration.get(context)
         mMinimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
@@ -215,9 +219,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     override fun onLayoutChild(parent: CoordinatorLayout, child: V, layoutDirection: Int): Boolean {
         // First let the parent lay it out
         if (mState != STATE_DRAGGING && mState != STATE_SETTLING) {
-//            if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
-//                child.fitsSystemWindows = true
-//            }
+            if (ViewCompat.getFitsSystemWindows(parent) && !ViewCompat.getFitsSystemWindows(child)) {
+                child.fitsSystemWindows = true
+            }
             parent.onLayoutChild(child, layoutDirection)
         }
 
@@ -247,61 +251,66 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         return true
     }
 
-    override fun onInterceptTouchEvent(parent: CoordinatorLayout?, child: V?, event: MotionEvent?): Boolean {
-        if (!child!!.isShown) {
-            return false
-        }
+    override fun onInterceptTouchEvent(parent: CoordinatorLayout, child: V?, event: MotionEvent): Boolean {
+        if (!LOCKED_FOR_SCROLLING) {
 
-        val action = MotionEventCompat.getActionMasked(event!!)
-        if (action == MotionEvent.ACTION_DOWN) {
-            reset()
-        }
-
-        when (action) {
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                mTouchingScrollingChild = false
-                mActivePointerId = MotionEvent.INVALID_POINTER_ID
-                // Reset the ignore flag
-                if (mIgnoreEvents) {
-                    mIgnoreEvents = false
-                    return false
-                }
+            if (!child!!.isShown) {
+                return false
             }
-            MotionEvent.ACTION_DOWN -> {
-                val initialX = event.x.toInt()
-                mInitialY = event.y.toInt()
-                if (mState == STATE_ANCHOR_POINT) {
-                    mActivePointerId = event.getPointerId(event.actionIndex)
-                    mTouchingScrollingChild = true
-                } else {
-                    val scroll = mNestedScrollingChildRef!!.get()
-                    if (scroll != null && parent!!.isPointInChildBounds(scroll, initialX, mInitialY)) {
-                        mActivePointerId = event.getPointerId(event.actionIndex)
-                        mTouchingScrollingChild = true
+
+            val action = event.action
+            if (action == MotionEvent.ACTION_DOWN) {
+                reset()
+            }
+
+            when (action) {
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> {
+                    mTouchingScrollingChild = false
+                    mActivePointerId = MotionEvent.INVALID_POINTER_ID
+                    // Reset the ignore flag
+                    if (mIgnoreEvents) {
+                        mIgnoreEvents = false
+                        return false
                     }
                 }
-                mIgnoreEvents = mActivePointerId == MotionEvent.INVALID_POINTER_ID && !parent!!.isPointInChildBounds(child, initialX, mInitialY)
+                MotionEvent.ACTION_DOWN -> {
+                    val initialX = event.x.toInt()
+                    mInitialY = event.y.toInt()
+                    if (mState == STATE_ANCHOR_POINT) {
+                        mActivePointerId = event.getPointerId(event.actionIndex)
+                        mTouchingScrollingChild = true
+                    } else {
+                        val scroll = mNestedScrollingChildRef!!.get()
+                        if (scroll != null && parent.isPointInChildBounds(scroll, initialX, mInitialY)) {
+                            mActivePointerId = event.getPointerId(event.actionIndex)
+                            mTouchingScrollingChild = true
+                        }
+                    }
+                    mIgnoreEvents = mActivePointerId == MotionEvent.INVALID_POINTER_ID && !parent.isPointInChildBounds(child, initialX, mInitialY)
+                }
+                MotionEvent.ACTION_MOVE -> {
+                }
             }
-            MotionEvent.ACTION_MOVE -> {
+
+            if (action == MotionEvent.ACTION_CANCEL) {
+                // We don't want to trigger a BottomSheet fling as a result of a Cancel MotionEvent (e.g., parent horizontal scroll view taking over touch events)
+                mScrollVelocityTracker.clear()
             }
-        }
 
-        if (action == MotionEvent.ACTION_CANCEL) {
-            // We don't want to trigger a BottomSheet fling as a result of a Cancel MotionEvent (e.g., parent horizontal scroll view taking over touch events)
-            mScrollVelocityTracker.clear()
+            if (!mIgnoreEvents && mViewDragHelper!!.shouldInterceptTouchEvent(event)) {
+                return true
+            }
+            // We have to handle cases that the ViewDragHelper does not capture the bottom sheet because
+            // it is not the top most view of its parent. This is not necessary when the touch event is
+            // happening over the scrolling content as nested scrolling logic handles that case.
+            val scroll = mNestedScrollingChildRef!!.get()
+            return action == MotionEvent.ACTION_MOVE && scroll != null &&
+                    !mIgnoreEvents && mState != STATE_DRAGGING &&
+                    !parent.isPointInChildBounds(scroll, event.x.toInt(), event.y.toInt()) &&
+                    Math.abs(mInitialY - event.y) > mViewDragHelper!!.touchSlop
         }
-
-        if (!mIgnoreEvents && mViewDragHelper!!.shouldInterceptTouchEvent(event)) {
-            return true
-        }
-        // We have to handle cases that the ViewDragHelper does not capture the bottom sheet because
-        // it is not the top most view of its parent. This is not necessary when the touch event is
-        // happening over the scrolling content as nested scrolling logic handles that case.
-        val scroll = mNestedScrollingChildRef!!.get()
-        return action == MotionEvent.ACTION_MOVE && scroll != null &&
-                !mIgnoreEvents && mState != STATE_DRAGGING &&
-                !parent!!.isPointInChildBounds(scroll, event.x.toInt(), event.y.toInt()) &&
-                Math.abs(mInitialY - event.y) > mViewDragHelper!!.touchSlop
+        return false
     }
 
     override fun onTouchEvent(parent: CoordinatorLayout?, child: V?, event: MotionEvent?): Boolean {
@@ -331,8 +340,12 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, directTargetChild: View, target: View, nestedScrollAxes: Int): Boolean {
-        mNestedScrolled = false
-        return nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
+        if (!LOCKED_FOR_SCROLLING) {
+            mNestedScrolled = false
+            return nestedScrollAxes and ViewCompat.SCROLL_AXIS_VERTICAL != 0
+        } else {
+            return false // DO NOT ACCEPT EVENTS
+        }
     }
 
     private val mScrollVelocityTracker = ScrollVelocityTracker()
@@ -407,79 +420,83 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout, child: V, target: View) {
-        if (child.top == expandedOffset) {
-            setStateInternal(STATE_EXPANDED)
-            mLastStableState = STATE_EXPANDED
-            return
-        }
-        if (target !== mNestedScrollingChildRef!!.get() || !mNestedScrolled) {
-            return
-        }
-        val top: Int
-        val targetState: Int
-
-        // Are we flinging up?
-        val scrollVelocity = mScrollVelocityTracker.scrollVelocity
-        if (scrollVelocity > mMinimumVelocity) {
-            if (mLastStableState == STATE_COLLAPSED) {
-                // Fling from collapsed to anchor
-                top = anchorPoint
-                targetState = STATE_ANCHOR_POINT
-            } else if (mLastStableState == STATE_ANCHOR_POINT) {
-                // Fling from anchor to expanded
-                top = expandedOffset
-                targetState = STATE_EXPANDED
-            } else {
-                // We are already expanded
-                top = expandedOffset
-                targetState = STATE_EXPANDED
+        if (!LOCKED_FOR_SCROLLING) {
+            if (child.top == expandedOffset) {
+                setStateInternal(STATE_EXPANDED)
+                mLastStableState = STATE_EXPANDED
+                return
             }
-        } else
-        // Are we flinging down?
-            if (scrollVelocity < -mMinimumVelocity) {
-                if (mLastStableState == STATE_EXPANDED) {
-                    // Fling to from expanded to anchor
+            if (target !== mNestedScrollingChildRef!!.get() || !mNestedScrolled) {
+                return
+            }
+            val top: Int
+            val targetState: Int
+
+            // Are we flinging up?
+            val scrollVelocity = mScrollVelocityTracker.scrollVelocity
+            if (scrollVelocity > mMinimumVelocity) {
+                if (mLastStableState == STATE_COLLAPSED) {
+                    // Fling from collapsed to anchor
                     top = anchorPoint
                     targetState = STATE_ANCHOR_POINT
                 } else if (mLastStableState == STATE_ANCHOR_POINT) {
-                    // Fling from anchor to collapsed
-                    top = collapsedOffset
-                    targetState = STATE_COLLAPSED
-                } else {
-                    // We are already collapsed
-                    top = collapsedOffset
-                    targetState = STATE_COLLAPSED
-                }
-            } else {
-                // Collapse?
-                val currentTop = child.top
-                if (currentTop > anchorPoint * 1.25) { // Multiply by 1.25 to account for parallax. The currentTop needs to be pulled down 50% of the anchor point before collapsing.
-                    top = collapsedOffset
-                    targetState = STATE_COLLAPSED
-                } else if (currentTop < anchorPoint * 0.5) {
+                    // Fling from anchor to expanded
                     top = expandedOffset
                     targetState = STATE_EXPANDED
                 } else {
-                    top = anchorPoint
-                    targetState = STATE_ANCHOR_POINT
-                }// Snap back to the anchor
-                // Expand?
-            }// Not flinging, just settle to the nearest state
+                    // We are already expanded
+                    top = expandedOffset
+                    targetState = STATE_EXPANDED
+                }
+            } else
+            // Are we flinging down?
+                if (scrollVelocity < -mMinimumVelocity) {
+                    if (mLastStableState == STATE_EXPANDED) {
+                        // Fling to from expanded to anchor
+                        top = anchorPoint
+                        targetState = STATE_ANCHOR_POINT
+                    } else if (mLastStableState == STATE_ANCHOR_POINT) {
+                        // Fling from anchor to collapsed
+                        top = collapsedOffset
+                        targetState = STATE_COLLAPSED
+                    } else {
+                        // We are already collapsed
+                        top = collapsedOffset
+                        targetState = STATE_COLLAPSED
+                    }
+                } else {
+                    // Collapse?
+                    val currentTop = child.top
+                    if (currentTop > anchorPoint * 1.25) { // Multiply by 1.25 to account for parallax. The currentTop needs to be pulled down 50% of the anchor point before collapsing.
+                        top = collapsedOffset
+                        targetState = STATE_COLLAPSED
+                    } else if (currentTop < anchorPoint * 0.5) {
+                        top = expandedOffset
+                        targetState = STATE_EXPANDED
+                    } else {
+                        top = anchorPoint
+                        targetState = STATE_ANCHOR_POINT
+                    }// Snap back to the anchor
+                    // Expand?
+                }// Not flinging, just settle to the nearest state
 
-        mLastStableState = targetState
-        if (mViewDragHelper!!.smoothSlideViewTo(child, child.left, top)) {
-            setStateInternal(STATE_SETTLING)
-            ViewCompat.postOnAnimation(child, SettleRunnable(child, targetState))
-        } else {
-            setStateInternal(targetState)
+            mLastStableState = targetState
+            if (mViewDragHelper!!.smoothSlideViewTo(child, child.left, top)) {
+                setStateInternal(STATE_SETTLING)
+                ViewCompat.postOnAnimation(child, SettleRunnable(child, targetState))
+            } else {
+                setStateInternal(targetState)
+            }
+            mNestedScrolled = false
         }
-        mNestedScrolled = false
     }
 
-    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout, child: V, target: View,
-                                  velocityX: Float, velocityY: Float): Boolean {
-        return target === mNestedScrollingChildRef!!.get() && (mState != STATE_EXPANDED || super.onNestedPreFling(coordinatorLayout, child, target,
-                velocityX, velocityY))
+    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout, child: V, target: View, velocityX: Float, velocityY: Float): Boolean {
+        if (!LOCKED_FOR_SCROLLING) {
+            return target === mNestedScrollingChildRef!!.get() && (mState != STATE_EXPANDED || super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY))
+        } else {
+            return false // DID NOT CONSUME Fling
+        }
     }
 
     /**
@@ -733,4 +750,14 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
             }
         }
     }
+
+    private fun getStatusBarHeight(context: Context): Int {
+        var result = 0
+        val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = context.resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
 }
