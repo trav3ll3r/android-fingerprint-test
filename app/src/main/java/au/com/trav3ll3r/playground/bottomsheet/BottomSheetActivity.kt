@@ -54,10 +54,13 @@ class BottomSheetActivity : AppCompatActivity() {
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehaviorPinned.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, @BottomSheetBehaviorPinned.State newState: Int) {
                 tabbedPagerLayout.setOnClickListener(null)
+                tabbedPagerLayout.setTabsClickable(true)
+
                 when (newState) {
                     BottomSheetBehaviorPinned.STATE_COLLAPSED -> {
                         Log.d("bottomsheet-", "STATE_COLLAPSED")
                         tabbedPagerLayout.setOnClickListener(openToAnchorClickListener)
+                        tabbedPagerLayout.setTabsClickable(false)
                     }
                     BottomSheetBehaviorPinned.STATE_DRAGGING -> Log.d("bottomsheet-", "STATE_DRAGGING")
                     BottomSheetBehaviorPinned.STATE_EXPANDED -> Log.d("bottomsheet-", "STATE_EXPANDED")

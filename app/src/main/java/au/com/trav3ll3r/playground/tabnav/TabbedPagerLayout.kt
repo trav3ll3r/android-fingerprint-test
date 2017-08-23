@@ -35,6 +35,7 @@ class TabbedPagerLayout
     private val tabIndicatorBg: View by lazy { find<View>(R.id.tab_indicator_bg) }
     private val tabIndicator: View by lazy { find<View>(R.id.tab_indicator) }
     private val viewPager: ViewPager by lazy { find<ViewPager>(R.id.tabbed_menu_view_pager) }
+    private val viewPagerWidth by lazy { viewPager.width }
 
     init {
         inflate(context, R.layout.tabbed_pager_layout, this)
@@ -111,26 +112,28 @@ class TabbedPagerLayout
         override fun onPageScrollStateChanged(state: Int) {}
 
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            if (viewPager.adapter == null) {
-                return
-            }
-
-            val tabWidth = viewPager.width / viewPager.adapter.count
-
-            val radius = 1.0
-            val exp = radius - Math.sqrt(Math.pow(radius, 2.0) - Math.pow(positionOffset.toDouble(), 2.0))
-            val log = Math.sqrt(Math.pow(radius, 2.0) - Math.pow(positionOffset - radius, 2.0))
-
-            val width = ((1 + TAB_INDICATOR_WIDTH_COEFFICIENT * (log - exp)) * tabWidth).toInt()
-            tabIndicator.layoutParams.width = width
-            tabIndicator.requestLayout()
-
-            val padding = ((position + exp) * tabWidth).toInt()
-            tabIndicatorBg.setPadding(padding, 0, 0, 0)
-            tabIndicatorBg.requestLayout()
+            updateTabIndicator(position, positionOffset)
         }
 
         override fun onPageSelected(position: Int) {}
+    }
+
+    fun updateTabIndicator(position: Int, positionOffset: Float = 0f) {
+        if (viewPager.adapter == null) {
+            return
+        }
+
+        val tabWidth = viewPagerWidth / viewPager.adapter.count
+
+        val radius = 1.0
+        val exp = radius - Math.sqrt(Math.pow(radius, 2.0) - Math.pow(positionOffset.toDouble(), 2.0))
+        val log = Math.sqrt(Math.pow(radius, 2.0) - Math.pow(positionOffset - radius, 2.0))
+
+        val width = ((1 + TAB_INDICATOR_WIDTH_COEFFICIENT * (log - exp)) * tabWidth).toInt()
+        val startOffset = ((position + exp) * tabWidth).toFloat()
+        tabIndicator.layoutParams.width = width
+        tabIndicator.x = startOffset
+        tabIndicator.requestLayout()
     }
 
     private fun getPadding(attrs: AttributeSet?, index: Int, defaultValueId: Int): Int {
