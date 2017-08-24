@@ -26,20 +26,6 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         lateinit var instance: BottomSheetBehaviorPinned<*>
     }
 
-    private var scrollingContent: NestedScrollView? = null
-
-    fun trackScrollingContent(content: NestedScrollView?) {
-        scrollingContent = content
-        scrollingContent?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, _ -> onScrollingContentChange() })
-        onScrollingContentChange()
-    }
-
-    var tabbedPagerLayout: TabbedPagerLayout? = null
-
-    private fun onScrollingContentChange() {
-        tabbedPagerLayout?.markAsSheetDragEnabled(DRAGGING_ENABLED)
-    }
-
     companion object {
         val INSTANCE: BottomSheetBehaviorPinned<*> by lazy { Holder.instance }
 
@@ -156,6 +142,8 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     private var SYSTEM_BAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
 
     private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + APP_TOOLBAR_HEIGHT }
+    var tabbedPagerLayout: TabbedPagerLayout? = null
+
 
     /**
      * Default constructor for instantiating BottomSheetBehaviors.
@@ -784,4 +772,20 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
                 else -> true
             }
         }
+
+    /* */
+    private var scrollingContent: NestedScrollView? = null
+
+    fun trackScrollingContent(content: NestedScrollView?) {
+        scrollingContent = content
+        // EACH TIME ScrollingContent IS SET AS TRACKED (ACTIVE), RESET ITS VERTICAL SCROLL TO TOP
+        scrollingContent?.scrollTo(0, 0)
+        scrollingContent?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, _ -> onScrollingContentChange() })
+        onScrollingContentChange()
+    }
+
+    private fun onScrollingContentChange() {
+        tabbedPagerLayout?.markAsSheetDragEnabled(DRAGGING_ENABLED)
+    }
+
 }
