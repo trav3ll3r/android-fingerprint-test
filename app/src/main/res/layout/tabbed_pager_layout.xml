@@ -22,7 +22,6 @@
             android:id="@+id/tab_indicator_bg"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tab_button_line_height"
-            android:layout_marginTop="@dimen/tab_indicator_line_marginTop"
             android:background="@android:color/white"
             android:orientation="horizontal">
 

@@ -32,6 +32,12 @@ class TabCustomView
         orientation = LinearLayout.VERTICAL
         layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
+        // SET TabCustomView top AND bottom PADDING (WHILE RETAINING left AND right)
+        setPadding(
+                textView.paddingLeft,
+                resources.getDimensionPixelSize(R.dimen.tab_marginTop),
+                textView.paddingRight,
+                resources.getDimensionPixelSize(R.dimen.tab_marginBottom))
         setTabSelected(false)
     }
 
