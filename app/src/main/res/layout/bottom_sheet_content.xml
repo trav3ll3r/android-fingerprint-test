@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/tab_marginTop"
-        app:content_padding="10dp"
+        app:content_padding="0dp"
         app:tabs_padding="10dp"
         android:fitsSystemWindows="false"
         app:tabs_background="@color/tabbedPagerBackground"

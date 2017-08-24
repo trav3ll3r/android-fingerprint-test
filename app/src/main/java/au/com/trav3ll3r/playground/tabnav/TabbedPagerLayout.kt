@@ -38,7 +38,7 @@ class TabbedPagerLayout
     private val tabLayout: TabLayout by lazy { find<TabLayout>(R.id.tab_layout) }
     private val tabIndicatorBg: View by lazy { find<View>(R.id.tab_indicator_bg) }
     private val tabIndicator: View by lazy { find<View>(R.id.tab_indicator) }
-    private val viewPager: ViewPager by lazy { find<ViewPager>(R.id.tabbed_menu_view_pager) }
+    private val viewPager: TabbedViewPager by lazy { find<TabbedViewPager>(R.id.tabbed_menu_view_pager) }
     private val viewPagerWidth by lazy { viewPager.width }
 
     init {
@@ -108,6 +108,7 @@ class TabbedPagerLayout
         params.marginStart = contentPadding
         params.marginEnd = contentPadding
         viewPager.layoutParams = params
+        viewPager.allowTouchEvents = false
     }
 
     private val pageListener = object : ViewPager.OnPageChangeListener {
