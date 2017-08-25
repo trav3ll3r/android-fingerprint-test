@@ -1,7 +1,7 @@
 package au.com.trav3ll3r.playground.tabnav
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import au.com.trav3ll3r.playground.R
-import org.jetbrains.anko.find
 
 class QuickActionsFragment : BaseTabbedPageFragment() {
     companion object {
@@ -19,7 +18,7 @@ class QuickActionsFragment : BaseTabbedPageFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_quick_actions, container, false) as TabScrollableContent
+        val view = inflater.inflate(R.layout.fragment_quick_actions, container, false) as NestedScrollView
         return view
     }
 
