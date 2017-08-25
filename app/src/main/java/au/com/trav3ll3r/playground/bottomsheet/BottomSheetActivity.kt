@@ -5,7 +5,6 @@ import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -59,20 +58,14 @@ class BottomSheetActivity : AppCompatActivity() {
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehaviorPinned.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, @BottomSheetBehaviorPinned.State newState: Int) {
                 tabbedPagerLayout.setOnClickListener(null)
-                tabbedPagerLayout.setTabsClickable(true)
                 appBarLayout.elevation = DEFAULT_APP_TOOLBAR_ELEVATION
 
                 when (newState) {
-                    BottomSheetBehaviorPinned.STATE_COLLAPSED -> {
-                        Log.d("bottomsheet-", "STATE_COLLAPSED")
-                        tabbedPagerLayout.setOnClickListener(openToAnchorClickListener)
-                        tabbedPagerLayout.setTabsClickable(false)
-                    }
+                    BottomSheetBehaviorPinned.STATE_COLLAPSED -> Log.d("bottomsheet-", "STATE_COLLAPSED")
                     BottomSheetBehaviorPinned.STATE_EXPANDED -> {
                         appBarLayout.elevation = 0f
                         Log.d("bottomsheet-", "STATE_EXPANDED")
                     }
-
                     BottomSheetBehaviorPinned.STATE_DRAGGING -> Log.d("bottomsheet-", "STATE_DRAGGING")
                     BottomSheetBehaviorPinned.STATE_ANCHOR_POINT -> Log.d("bottomsheet-", "STATE_ANCHOR_POINT")
                     BottomSheetBehaviorPinned.STATE_HIDDEN -> Log.d("bottomsheet-", "STATE_HIDDEN")
@@ -93,7 +86,7 @@ class BottomSheetActivity : AppCompatActivity() {
     private val items: List<QuickItem> = listOf(
             QuickItem(QuickActionsFragment::class.java.simpleName, R.string.ok, android.R.drawable.ic_lock_lock),
             QuickItem(QuickTasksFragment::class.java.simpleName, R.string.cancel, android.R.drawable.arrow_up_float)
-//            ,QuickItem(QuickActionsFragment::class.java.simpleName, R.string.dashboard_quicklinks_actions, R.drawable.ic_dashboard_actions)
+//            ,QuickItem(QuickActionsFragment::class.java.simpleName, android.R.string.yes, android.R.drawable.arrow_down_float)
     )
 
     /**
@@ -125,8 +118,6 @@ class BottomSheetActivity : AppCompatActivity() {
         }, childFragmentManager))
         tabbedPagerLayout.selectPage(0)
     }
-
-    private val openToAnchorClickListener = View.OnClickListener { bottomSheetBehavior.state = BottomSheetBehaviorPinned.STATE_ANCHOR_POINT }
 
     private val bottomSheetTreeObserver: ViewTreeObserver.OnGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         setBottomSheetHeight()

@@ -11,6 +11,7 @@ import android.support.v4.view.ViewCompat
 import android.support.v4.widget.NestedScrollView
 import android.support.v4.widget.ViewDragHelper
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -20,13 +21,15 @@ import au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
 import java.lang.ref.WeakReference
 import java.util.*
 
-class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
+class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, TabbedPagerLayout.PageChangeListener {
 
     private object Holder {
         lateinit var instance: BottomSheetBehaviorPinned<*>
     }
 
     companion object {
+        private val TAG = BottomSheetBehaviorPinned::class.java.simpleName
+
         val INSTANCE: BottomSheetBehaviorPinned<*> by lazy { Holder.instance }
 
         /**
@@ -125,9 +128,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
     var isHideable: Boolean = false
 
     @State
-    private var mState = STATE_ANCHOR_POINT
+    private var mState = STATE_COLLAPSED
     @State
-    private var mLastStableState = STATE_ANCHOR_POINT
+    private var mLastStableState = STATE_COLLAPSED
     private var mViewDragHelper: ViewDragHelper? = null
     private var mIgnoreEvents: Boolean = false
     private var mNestedScrolled: Boolean = false
@@ -143,6 +146,13 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
 
     private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + APP_TOOLBAR_HEIGHT }
     var tabbedPagerLayout: TabbedPagerLayout? = null
+        get() {
+            return field
+        }
+        set(value) {
+            field = value
+            field?.pageChangeListener = this@BottomSheetBehaviorPinned
+        }
 
 
     /**
@@ -788,4 +798,12 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V> {
         tabbedPagerLayout?.markAsSheetDragEnabled(DRAGGING_ENABLED)
     }
 
+    // ---------------------------------------
+    // PageChangeListener methods
+    override fun onPageSelected(position: Int) {
+        Log.d(TAG, "onPageSelected $position")
+        if (mState == STATE_COLLAPSED) {
+            state = STATE_ANCHOR_POINT
+        }
+    }
 }

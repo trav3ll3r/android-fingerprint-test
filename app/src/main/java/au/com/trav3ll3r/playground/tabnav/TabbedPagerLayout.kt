@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,14 @@ import org.jetbrains.anko.find
 class TabbedPagerLayout
 @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : LinearLayout(context, attrs, defStyleAttr) {
+
+    interface PageChangeListener {
+        /**
+         * Fired every time a selected Tab in TabLayout has changed.
+         * Does not fire when Tab is Re-Selected
+         */
+        fun onPageSelected(position: Int)
+    }
 
     companion object {
         private const val TAB_INDICATOR_WIDTH_COEFFICIENT = 0.3
@@ -40,6 +49,7 @@ class TabbedPagerLayout
     private val tabIndicator: View by lazy { find<View>(R.id.tab_indicator) }
     private val viewPager: TabbedViewPager by lazy { find<TabbedViewPager>(R.id.tabbed_menu_view_pager) }
     private val viewPagerWidth by lazy { viewPager.width }
+    var pageChangeListener: PageChangeListener? = null
 
     init {
         inflate(context, R.layout.tabbed_pager_layout, this)
@@ -85,17 +95,20 @@ class TabbedPagerLayout
     private fun initViewPager() {
         tabLayout.setupWithViewPager(viewPager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                pageChangeListener?.onPageSelected(tab.position)
+            }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                val view = tab?.customView
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                val view = tab.customView
                 if (view is TabCustomView) {
                     view.setTabSelected(false)
                 }
             }
 
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                val view = tab?.customView
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                pageChangeListener?.onPageSelected(tab.position)
+                val view = tab.customView
                 if (view is TabCustomView) {
                     view.setTabSelected(true)
                 }
@@ -118,7 +131,12 @@ class TabbedPagerLayout
             updateTabIndicator(position, positionOffset)
         }
 
-        override fun onPageSelected(position: Int) {}
+        override fun onPageSelected(position: Int) {
+//            Log.d("ViewPager.pageListener", "onPageSelected $position")
+//            if (viewPager.allowTouchEvents) {
+//                pageChangeListener?.onPageSelected(position)
+//            }
+        }
     }
 
     fun updateTabIndicator(position: Int, positionOffset: Float = 0f) {
