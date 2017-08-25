@@ -9,13 +9,13 @@ import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import au.com.trav3ll3r.playground.R
 import au.com.trav3ll3r.playground.bottomsheet.BottomSheetBehaviorPinned
+import au.com.trav3ll3r.playground.util.statusBarHeight
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.find
 
@@ -181,7 +181,9 @@ class TabbedPagerLayout
 
     fun setTabUnderlineSelectedColor(@ColorRes color: Int) = tabIndicator.setBackgroundColor(ContextCompat.getColor(context, color))
 
-    fun setTabsBackground(@ColorRes color: Int) { tabsBackground.backgroundResource = color }
+    fun setTabsBackground(@ColorRes color: Int) {
+        tabsBackground.backgroundResource = color
+    }
 
     fun setAdapter(adapter: TabbedPagerAdapter) {
         viewPager.adapter = adapter
@@ -240,7 +242,7 @@ class TabbedPagerLayout
     }
 
     fun onParentLayoutChange(parent: View) {
-        viewPager.layoutParams.height = parent.measuredHeight - tabLayout.height - resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
+        viewPager.layoutParams.height = parent.measuredHeight - tabLayout.height - resources.getDimensionPixelSize(R.dimen.app_toolbar_height) - context.statusBarHeight
         requestLayout()
     }
 }
