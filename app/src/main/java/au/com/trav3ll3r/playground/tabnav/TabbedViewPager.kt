@@ -29,4 +29,34 @@ class TabbedViewPager(context: Context, attrs: AttributeSet) : ViewPager(context
             super.onInterceptTouchEvent(event)
         } else false
     }
+
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        return when {
+//            allowTouchEvents -> super.onTouchEvent(event)
+//            event.action in listOf(MotionEvent.ACTION_BUTTON_PRESS, MotionEvent.ACTION_BUTTON_RELEASE) -> return true
+//            else -> false
+//        }
+//    }
+
+//    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+//        return when {
+//            allowTouchEvents -> super.onInterceptTouchEvent(event)
+//            event.action in listOf(MotionEvent.ACTION_BUTTON_PRESS, MotionEvent.ACTION_BUTTON_RELEASE) -> return true
+//            else -> false
+//        }
+//    }
+
+//    override fun performClick(): Boolean {
+//        return super.performClick()
+//    }
+//
+//    override fun onTouchEvent(event: MotionEvent): Boolean {
+//        if (event.actionMasked in listOf(MotionEvent.ACTION_UP, MotionEvent.ACTION_DOWN, MotionEvent.ACTION_BUTTON_PRESS, MotionEvent.ACTION_BUTTON_RELEASE)) { performClick(); return true }
+//        return false
+//    }
+//
+//    override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+//        if (event.actionMasked in listOf(MotionEvent.ACTION_UP, MotionEvent.ACTION_DOWN, MotionEvent.ACTION_BUTTON_PRESS, MotionEvent.ACTION_BUTTON_RELEASE)) { return true}
+//        return false
+//    }
 }

@@ -5,6 +5,7 @@ import android.support.v4.widget.NestedScrollView
 import android.util.AttributeSet
 import android.view.MotionEvent
 
+@Deprecated("USE NestedScrollView", level = DeprecationLevel.WARNING)
 class TabScrollableContent(context: Context, attributeSet: AttributeSet) : NestedScrollView(context, attributeSet) {
 
     companion object {
@@ -12,7 +13,7 @@ class TabScrollableContent(context: Context, attributeSet: AttributeSet) : Neste
         private const val SCROLL_DIRECTION_DOWN = -1
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+//    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
 //        BottomSheetBehaviorPinned.LOCKED_FOR_SCROLLING = true
 //        when (ev.action) {
 //            MotionEvent.ACTION_MOVE -> {
@@ -26,8 +27,8 @@ class TabScrollableContent(context: Context, attributeSet: AttributeSet) : Neste
 //            }
 //            //canScrollVertically()
 //        }
-        return true
-    }
+//        return true
+//    }
 
 //    override fun setVerticalScrollbarPosition(position: Int) {
 //        super.setVerticalScrollbarPosition(position)

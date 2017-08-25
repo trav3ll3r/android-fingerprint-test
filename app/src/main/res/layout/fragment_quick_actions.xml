@@ -10,83 +10,84 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <Button
+            android:id="@+id/quick_action_01"
             style="@style/quick_action"
             android:text="ACTION 1" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 2" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 3" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 4" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 5" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 6" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION7" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 8" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 9" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 10" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 11" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 12" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 13" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 14" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 15" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 16" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 17" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 18" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 19" />
 
-        <TextView
+        <Button
             style="@style/quick_action"
             android:text="ACTION 20" />
 
