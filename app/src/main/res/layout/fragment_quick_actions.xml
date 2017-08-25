@@ -2,98 +2,93 @@
 <au.com.trav3ll3r.playground.tabnav.TabScrollableContent
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent">
 
-    <!--android:background="#00ff00"-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 1"/>
+            style="@style/quick_action"
+            android:text="ACTION 1" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 2"/>
+            style="@style/quick_action"
+            android:text="ACTION 2" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 3"/>
+            style="@style/quick_action"
+            android:text="ACTION 3" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 4"/>
+            style="@style/quick_action"
+            android:text="ACTION 4" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 5"/>
+            style="@style/quick_action"
+            android:text="ACTION 5" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 6" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION7" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 8" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 9" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 10"/>
+            style="@style/quick_action"
+            android:text="ACTION 10" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 11" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 12" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 13" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 14" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 15"/>
+            style="@style/quick_action"
+            android:text="ACTION 15" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 16" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 17" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 18" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS"/>
+            style="@style/quick_action"
+            android:text="ACTION 19" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="ACTIONS 20"/>
+            style="@style/quick_action"
+            android:text="ACTION 20" />
 
     </LinearLayout>
 
