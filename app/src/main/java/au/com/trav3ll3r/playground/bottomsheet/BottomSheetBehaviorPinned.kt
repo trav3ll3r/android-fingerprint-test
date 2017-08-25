@@ -440,9 +440,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
             // Are we flinging down?
                 if (scrollVelocity < -mMinimumVelocity) {
                     if (mLastStableState == STATE_EXPANDED) {
-                        // Fling to from expanded to anchor
-                        top = anchorPoint
-                        targetState = STATE_ANCHOR_POINT
+                        // Fling from EXPANDED to COLLAPSED (skip ANCHOR)
+//                        top = anchorPoint
+//                        targetState = STATE_ANCHOR_POINT
+                        top = collapsedOffset
+                        targetState = STATE_COLLAPSED
                     } else if (mLastStableState == STATE_ANCHOR_POINT) {
                         // Fling from anchor to collapsed
                         top = collapsedOffset
