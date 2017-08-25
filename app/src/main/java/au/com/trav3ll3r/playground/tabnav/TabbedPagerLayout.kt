@@ -222,7 +222,7 @@ class TabbedPagerLayout
     }
 
     fun onParentLayoutChange(parent: View) {
-        viewPager.layoutParams.height = parent.measuredHeight - tabLayout.height - parent.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
+        viewPager.layoutParams.height = parent.measuredHeight - tabLayout.height - resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
         requestLayout()
     }
 }
