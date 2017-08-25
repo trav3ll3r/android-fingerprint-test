@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="BottomSheetBehavior">au.com.trav3ll3r.playground.bottomsheet.BottomSheetBehaviorPinned</string>
-    <string name="PinnedToolbarBehavior">au.com.trav3ll3r.playground.bottomsheet.PinnedToolbarBehavior</string>
 </resources>
