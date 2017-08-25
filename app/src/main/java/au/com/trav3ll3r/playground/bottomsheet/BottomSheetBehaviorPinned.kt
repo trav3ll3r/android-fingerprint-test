@@ -18,6 +18,7 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import au.com.trav3ll3r.playground.R
 import au.com.trav3ll3r.playground.tabnav.TabbedPagerLayout
+import au.com.trav3ll3r.playground.util.statusBarHeight
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -142,9 +143,9 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
     private var mInitialY: Int = 0
     private var mTouchingScrollingChild: Boolean = false
     private var APP_TOOLBAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
-    private var SYSTEM_BAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
+    private var STATUS_BAR_HEIGHT: Int = 0 // SET IN CONSTRUCTOR
 
-    private val toolbarsHeight by lazy { SYSTEM_BAR_HEIGHT + APP_TOOLBAR_HEIGHT }
+    private val toolbarsHeight by lazy { STATUS_BAR_HEIGHT + APP_TOOLBAR_HEIGHT }
     var tabbedPagerLayout: TabbedPagerLayout? = null
         get() {
             return field
@@ -182,7 +183,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
         a.recycle()
 
         APP_TOOLBAR_HEIGHT = context.resources.getDimensionPixelSize(R.dimen.app_toolbar_height)
-        SYSTEM_BAR_HEIGHT = getStatusBarHeight(context)
+        STATUS_BAR_HEIGHT = context.statusBarHeight
 
         val configuration = ViewConfiguration.get(context)
         mMinimumVelocity = configuration.scaledMinimumFlingVelocity.toFloat()
@@ -740,15 +741,6 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
         }
     }
 
-    private fun getStatusBarHeight(context: Context): Int {
-        var result = 0
-        val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-        if (resourceId > 0) {
-            result = context.resources.getDimensionPixelSize(resourceId)
-        }
-        return result
-    }
-
     /**
      * Callback for monitoring events about bottom sheets.
      */
@@ -806,8 +798,11 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
         Log.d(TAG, "onPageSelected $position")
         when (mState) {
             STATE_COLLAPSED -> state = STATE_ANCHOR_POINT
-            STATE_EXPANDED -> { if (position == tabbedPagerLayout?.currentPage) state = STATE_COLLAPSED }
-            else -> {}
+            STATE_EXPANDED -> {
+                if (position == tabbedPagerLayout?.currentPage) state = STATE_COLLAPSED
+            }
+            else -> {
+            }
         }
     }
 }
