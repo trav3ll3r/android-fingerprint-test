@@ -705,7 +705,7 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
         }
     }
 
-    protected class SavedState : View.BaseSavedState {
+    private class SavedState : View.BaseSavedState {
 
         @State
         internal val state: Int
@@ -802,8 +802,10 @@ class BottomSheetBehaviorPinned<V : View> : CoordinatorLayout.Behavior<V>, Tabbe
     // PageChangeListener methods
     override fun onPageSelected(position: Int) {
         Log.d(TAG, "onPageSelected $position")
-        if (mState == STATE_COLLAPSED) {
-            state = STATE_ANCHOR_POINT
+        when (mState) {
+            STATE_COLLAPSED -> state = STATE_ANCHOR_POINT
+            STATE_EXPANDED -> { if (position == tabbedPagerLayout?.currentPage) state = STATE_COLLAPSED }
+            else -> {}
         }
     }
 }
